@@ -1430,13 +1430,12 @@ footer {
     btn.textContent = 'Enviando...';
 
     const formData = new FormData(this);
-    const data = Object.fromEntries(formData.entries());
 
     try {
       const res = await fetch('https://formspree.io/f/maqpydbq', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(data)
+        body: formData,
+        headers: { 'Accept': 'application/json' }
       });
 
       if (res.ok) {
@@ -1444,9 +1443,10 @@ footer {
         document.getElementById('successView').style.display = 'block';
         this.reset();
       } else {
+        const data = await res.json();
         btn.disabled = false;
         btn.textContent = 'Solicitar mi demo gratuita →';
-        alert('Hubo un error. Por favor intente de nuevo.');
+        alert('Error: ' + (data.error || 'Por favor intente de nuevo.'));
       }
     } catch(err) {
       btn.disabled = false;
