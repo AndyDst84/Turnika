@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Turnika Dental — Automatización Premium para Clínicas</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1423,34 +1422,35 @@ footer {
     if(e.target === this) closeModal();
   });
 
-  // EmailJS integration
-  emailjs.init('EHHrTgOiLkwnX7v_E');
-
-  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  // Contact form - mailto (universal, no external services needed)
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Enviando...';
 
-    const templateParams = {
-      nombre:        this.querySelector('[name="nombre"]').value,
-      clinica:       this.querySelector('[name="clinica"]').value,
-      email:         this.querySelector('[name="email"]').value,
-      telefono:      this.querySelector('[name="telefono"]').value || 'No indicado',
-      especialistas: this.querySelector('[name="especialistas"]').value || 'No indicado'
-    };
+    const nombre        = this.querySelector('[name="nombre"]').value;
+    const clinica       = this.querySelector('[name="clinica"]').value;
+    const email         = this.querySelector('[name="email"]').value;
+    const telefono      = this.querySelector('[name="telefono"]').value || 'No indicado';
+    const especialistas = this.querySelector('[name="especialistas"]').value || 'No indicado';
 
-    try {
-      await emailjs.send('service_xbfqk1i', 'template_jhaxxmx', templateParams);
-      document.getElementById('formView').style.display = 'none';
-      document.getElementById('successView').style.display = 'block';
-      this.reset();
-    } catch(err) {
-      btn.disabled = false;
-      btn.textContent = 'Solicitar mi demo gratuita →';
-      alert('Error al enviar. Por favor intente de nuevo.');
-      console.error(err);
-    }
+    const subject = encodeURIComponent('Solicitud de demo — ' + clinica);
+    const body    = encodeURIComponent(
+      'Hola Andrés, me interesa conocer más sobre Turnika Dental.\n\n' +
+      'Mis datos:\n' +
+      '• Nombre: '        + nombre        + '\n' +
+      '• Clínica: '       + clinica       + '\n' +
+      '• Correo: '        + email         + '\n' +
+      '• Teléfono: '      + telefono      + '\n' +
+      '• Especialistas: ' + especialistas + '\n\n' +
+      'Quedo atento a su respuesta.'
+    );
+
+    // Show success immediately
+    document.getElementById('formView').style.display  = 'none';
+    document.getElementById('successView').style.display = 'block';
+    this.reset();
+
+    // Open mail client
+    window.open('mailto:turnika.dental@proton.me?subject=' + subject + '&body=' + body, '_blank');
   });
 
   // Scroll reveal
